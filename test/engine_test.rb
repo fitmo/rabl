@@ -78,6 +78,22 @@ context "Rabl::Engine" do
 
       denies(:instance_variable_defined?, :@_cache_key)
     end
+
+    context "undefined object" do
+      setup do
+        template = rabl %q{
+          object @user
+          cache ['foo', @users]
+        }
+        @user = User.new
+        scope = Object.new
+        scope.instance_variable_set :@user, @user
+        template.render(scope)
+        template.instance_eval('@engine')
+      end
+ 
+      asserts_topic.assigns(:_cache) { [['foo', @user], nil] }
+    end
   end
 
   context "with defaults" do

@@ -213,6 +213,7 @@ module Rabl
     # options is passed through to the cache store
     def cache(key = nil, options = {})
       key ||= root_object # if called but missing, use object
+      key.map! { |o| o.nil? ? @_data_object : o  } if key.is_a?(Array)
       @_cache_key     = key
       @_cache_options = options
     end
